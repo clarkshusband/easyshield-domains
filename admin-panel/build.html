@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyShield — Build</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fff;
+            --bg-inset: #f6f8fa;
+            --border: #d1d9e0;
+            --border-faint: #e8ecf0;
+            --text: #1f2328;
+            --text-2: #656d76;
+            --text-3: #8b949e;
+            --accent: #0969da;
+            --green: #1a7f37;
+            --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            --sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--sans);
+            font-size: 13px;
+            line-height: 1.45;
+            color: var(--text);
+            background: var(--bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        .topbar {
+            height: 40px;
+            border-bottom: 1px solid var(--border-faint);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .topbar-brand {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .topbar-nav { display: flex; }
+        .topbar-nav a {
+            padding: 0 10px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--text-2);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+        }
+        .topbar-nav a:hover { color: var(--text); }
+        .topbar-nav a.active {
+            color: var(--text);
+            font-weight: 500;
+            border-bottom-color: var(--accent);
+        }
+        .page {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 16px 20px 40px;
+        }
+        .section {
+            margin-top: 20px;
+        }
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-faint);
+        }
+        .section-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .f { margin-bottom: 10px; }
+        .f:last-child { margin-bottom: 0; }
+        .f label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-2);
+            margin-bottom: 3px;
+        }
+        .f input {
+            width: 100%;
+            height: 28px;
+            padding: 0 7px;
+            font-size: 12px;
+            font-family: var(--sans);
+            color: var(--text);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            outline: none;
+        }
+        .f input:focus { border-color: var(--accent); }
+        .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            height: 28px;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: var(--sans);
+            color: var(--text);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover { background: var(--bg-inset); }
+        .btn-primary {
+            color: #fff;
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .btn-primary:hover { background: #0860ca; }
+        .cp {
+            display: inline;
+            padding: 0 5px;
+            font-size: 11px;
+            font-family: var(--sans);
+            color: var(--text-3);
+            background: none;
+            border: 1px solid var(--border-faint);
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+        .cp:hover { color: var(--text); border-color: var(--border); }
+        code {
+            font-family: var(--mono);
+            font-size: 11px;
+            background: var(--bg-inset);
+            padding: 1px 3px;
+            border-radius: 2px;
+        }
+        .result {
+            padding: 8px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border-faint);
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+        .result.show { display: block; }
+        .step-list {
+            font-size: 12px;
+            color: var(--text-2);
+            line-height: 1.7;
+        }
+        .step-list div { margin-bottom: 4px; }
+        .step-list span { color: var(--text-3); margin-right: 8px; }
+        .feat-list {
+            font-size: 12px;
+            color: var(--text-2);
+            line-height: 1.7;
+        }
+        .feat-list div { margin-bottom: 2px; }
+        .feat-list span { color: var(--green); margin-right: 8px; }
+        .toast {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+            background: var(--text);
+            border-radius: 4px;
+            z-index: 200;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.12s, transform 0.12s;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .mono { font-family: var(--mono); }
+        .flex { display: flex; }
+        .aic { align-items: center; }
+        .gap { gap: 6px; }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="index.html" class="topbar-brand">EasyShield</a>
+        <nav class="topbar-nav">
+            <a href="index.html">Dashboard</a>
+            <a href="index.html">Licenses</a>
+            <a href="index.html">Servers</a>
+            <a href="#" class="active">Build</a>
+        </nav>
+    </div>
+
+    <div class="page">
+        <div class="section">
+            <div class="section-head">
+                <span class="section-title">Build jar</span>
+            </div>
+            <div style="padding: 8px 0;">
+                <div class="f-row">
+                    <div class="f">
+                        <label>License key</label>
+                        <input class="mono" id="key" placeholder="EASYSHIELD-XXXX-XXXX-XXXX-XXXX">
+                    </div>
+                    <div class="f">
+                        <label>Customer</label>
+                        <input id="cust" placeholder="Optional">
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button class="btn btn-primary" onclick="gen()">Generate</button>
+                </div>
+                <div class="result" id="res">
+                    <div class="flex aic gap">
+                        <code class="mono" style="flex:1;word-break:break-all" id="cmd"></code>
+                        <button class="cp" onclick="cp()">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-head">
+                <span class="section-title">Instructions</span>
+            </div>
+            <div class="step-list" style="padding: 6px 0;">
+                <div><span>1</span>Create a license in the Licenses tab</div>
+                <div><span>2</span>Run the build script in your project root</div>
+                <div><span>3</span>Output in <code>dist/</code> — send to customer, no JVM args needed</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-head">
+                <span class="section-title">Capabilities</span>
+            </div>
+            <div class="feat-list" style="padding: 6px 0;">
+                <div><span>✓</span>License compiled into bytecode</div>
+                <div><span>✓</span>HWID-locked to prevent redistribution</div>
+                <div><span>✓</span>Server analytics reported to your API</div>
+                <div><span>✓</span>Spigot, Paper, Folia compatible</div>
+                <div><span>✓</span>Java 8 through 25</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let cmd='';
+        function gen(){
+            const k=document.getElementById('key').value.trim();
+            const c=document.getElementById('cust').value.trim();
+            if(!k){toast('Enter key');return;}
+            cmd=`.\\tools\\build-with-license.ps1 -LicenseKey "${k}"${c?` -CustomerName "${c}"`:''}`;
+            document.getElementById('cmd').textContent=cmd;
+            document.getElementById('res').classList.add('show');
+        }
+        function cp(){navigator.clipboard.writeText(cmd).then(()=>toast('Copied'));}
+        function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800);}
+    </script>
+</body>
+</html>

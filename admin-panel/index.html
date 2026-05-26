@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyShield — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #ffffff;
+            --color-bg-subtle: #f9fafb;
+            --color-bg-muted: #f3f4f6;
+            --color-border: #e5e7eb;
+            --color-border-strong: #d1d5db;
+            --color-text: #111827;
+            --color-text-secondary: #6b7280;
+            --color-text-muted: #9ca3af;
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+            --color-primary-light: #eff6ff;
+            --color-success: #059669;
+            --color-success-light: #ecfdf5;
+            --color-danger: #dc2626;
+            --color-danger-light: #fef2f2;
+            --color-warning: #d97706;
+            --color-warning-light: #fffbeb;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-lg: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg-subtle);
+            color: var(--color-text);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--color-bg);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .nav-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            height: 56px;
+            gap: 32px;
+        }
+        .nav-brand {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--color-text);
+            text-decoration: none;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            object-fit: contain;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-tab {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            transition: all 0.15s ease;
+            text-decoration: none;
+            border: none;
+            background: none;
+        }
+        .nav-tab:hover {
+            color: var(--color-text);
+            background: var(--color-bg-muted);
+        }
+        .nav-tab.active {
+            color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+        .nav-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-text-muted);
+        }
+        .nav-status-dot.connected {
+            background: var(--color-success);
+        }
+
+        /* Layout */
+        .main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-text);
+            letter-spacing: -0.5px;
+        }
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-body-flush {
+            padding: 0;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        .stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-text);
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+        .stat-change {
+            font-size: 12px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stat-change-positive { color: var(--color-success); }
+        .stat-change-negative { color: var(--color-danger); }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead th {
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--color-bg-subtle);
+            border-bottom: 1px solid var(--color-border);
+            white-space: nowrap;
+        }
+        thead th:first-child { border-radius: var(--radius-lg) 0 0 0; }
+        thead th:last-child { border-radius: 0 var(--radius-lg) 0 0; }
+        tbody td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--color-text);
+            border-bottom: 1px solid var(--color-border);
+            vertical-align: middle;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: var(--color-bg-subtle); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .badge-success {
+            background: var(--color-success-light);
+            color: var(--color-success);
+        }
+        .badge-danger {
+            background: var(--color-danger-light);
+            color: var(--color-danger);
+        }
+        .badge-warning {
+            background: var(--color-warning-light);
+            color: var(--color-warning);
+        }
+        .badge-neutral {
+            background: var(--color-bg-muted);
+            color: var(--color-text-secondary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid transparent;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+        }
+        .btn-secondary {
+            background: var(--color-bg);
+            color: var(--color-text);
+            border-color: var(--color-border);
+        }
+        .btn-secondary:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border-strong);
+        }
+        .btn-danger {
+            background: var(--color-bg);
+            color: var(--color-danger);
+            border-color: var(--color-border);
+        }
+        .btn-danger:hover {
+            background: var(--color-danger-light);
+            border-color: var(--color-danger);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--color-text-secondary);
+            border-color: transparent;
+            padding: 4px 8px;
+        }
+        .btn-ghost:hover {
+            background: var(--color-bg-muted);
+            color: var(--color-text);
+        }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+        .btn-icon {
+            padding: 6px;
+            width: 32px;
+            height: 32px;
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 6px;
+        }
+        .input-hint {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+        .input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-family: var(--font-sans);
+            color: var(--color-text);
+            background: var(--color-bg);
+            transition: all 0.15s ease;
+            outline: none;
+        }
+        .input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .input::placeholder {
+            color: var(--color-text-muted);
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Modal */
+        .modal {
+            background: var(--color-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 480px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        .modal-body {
+            padding: 20px 24px;
+        }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* Code */
+        code {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            background: var(--color-bg-muted);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            color: var(--color-text);
+        }
+        code.block {
+            display: block;
+            padding: 12px 16px;
+            background: var(--color-bg-muted);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        /* Copy button */
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            color: var(--color-text-secondary);
+            font-size: 11px;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .copy-btn:hover {
+            background: var(--color-bg-muted);
+            color: var(--color-text);
+        }
+
+        /* Connection form */
+        .connect-form {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+        .connect-form-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .connect-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        /* Server list */
+        .server-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .server-item:last-child { border-bottom: none; }
+        .server-info { flex: 1; }
+        .server-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        .server-meta {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: 2px;
+        }
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .server-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        /* Empty state */
+        .empty-state {
+            padding: 48px 24px;
+            text-align: center;
+        }
+        .empty-state-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+        .empty-state-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+        .empty-state-desc {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        /* Layout helpers */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        .mt-4 { margin-top: 16px; }
+        .mt-6 { margin-top: 24px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        .text-sm { font-size: 13px; }
+        .text-xs { font-size: 12px; }
+        .text-muted { color: var(--color-text-secondary); }
+        .font-mono { font-family: var(--font-mono); }
+        .hidden { display: none !important; }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--color-text);
+            color: white;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            z-index: 200;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(16px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInModal {
+            from { opacity: 0; transform: translateY(-20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes overlayIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(20px) translateY(10px); }
+            to { opacity: 1; transform: translateX(0) translateY(0); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateX(0) translateY(0); }
+            to { opacity: 0; transform: translateX(20px) translateY(10px); }
+        }
+        @keyframes statusPulse {
+            0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.5); }
+            70% { box-shadow: 0 0 0 6px rgba(5, 150, 105, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .nav-status-dot.connected {
+            background: var(--color-success);
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        .tab-content {
+            animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .stat-card {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.05s; }
+        .stat-card:nth-child(2) { animation-delay: 0.1s; }
+        .stat-card:nth-child(3) { animation-delay: 0.15s; }
+
+        .stat-value {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .stat-value.counting {
+            animation: countUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.2s;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .connect-form {
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.open {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 10vh;
+            animation: overlayIn 0.2s ease both;
+        }
+        .modal-overlay.open .modal {
+            animation: slideInModal 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        tbody tr {
+            animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        tbody tr:nth-child(1) { animation-delay: 0.03s; }
+        tbody tr:nth-child(2) { animation-delay: 0.06s; }
+        tbody tr:nth-child(3) { animation-delay: 0.09s; }
+        tbody tr:nth-child(4) { animation-delay: 0.12s; }
+        tbody tr:nth-child(5) { animation-delay: 0.15s; }
+        tbody tr:nth-child(6) { animation-delay: 0.18s; }
+        tbody tr:nth-child(7) { animation-delay: 0.21s; }
+        tbody tr:nth-child(8) { animation-delay: 0.24s; }
+        tbody tr:nth-child(9) { animation-delay: 0.27s; }
+        tbody tr:nth-child(10) { animation-delay: 0.3s; }
+
+        .server-item {
+            animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .server-item:nth-child(1) { animation-delay: 0.05s; }
+        .server-item:nth-child(2) { animation-delay: 0.1s; }
+        .server-item:nth-child(3) { animation-delay: 0.15s; }
+        .server-item:nth-child(4) { animation-delay: 0.2s; }
+        .server-item:nth-child(5) { animation-delay: 0.25s; }
+
+        .toast.show {
+            animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .toast.hiding {
+            animation: toastOut 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .btn {
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+        }
+        .btn-primary:hover::after {
+            transform: translateX(100%);
+        }
+
+        .badge {
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.92);
+        }
+
+        .empty-state {
+            animation: fadeIn 0.4s ease both;
+        }
+
+        .nav-tab {
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--color-primary);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(-50%);
+            border-radius: 1px;
+        }
+        .nav-tab.active::after {
+            width: 100%;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--color-bg-muted) 25%, var(--color-bg-subtle) 50%, var(--color-bg-muted) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+            border-radius: var(--radius-sm);
+        }
+        .skeleton-text {
+            height: 14px;
+            margin-bottom: 8px;
+        }
+        .skeleton-value {
+            height: 28px;
+            width: 48px;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">
+                <img src="logo.jpg" alt="EasyShield" class="nav-brand-icon">
+                EasyShield
+            </a>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+                <button class="nav-tab" data-tab="licenses">Licenses</button>
+                <button class="nav-tab" data-tab="servers">Servers</button>
+                <button class="nav-tab" data-tab="build">Build</button>
+            </div>
+            <div class="nav-right">
+                <div class="nav-status">
+                    <div class="nav-status-dot" id="statusDot"></div>
+                    <span id="statusText">Disconnected</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Connection Form -->
+        <div class="connect-form" id="connectForm">
+            <div class="connect-form-title">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 1C4.134 1 1 4.134 1 8s3.134 7 7 7 7-3.134 7-7S11.866 1 8 1zm0 12.5c-3.038 0-5.5-2.462-5.5-5.5S4.962 2.5 8 2.5s5.5 2.462 5.5 5.5-2.462 5.5-5.5 5.5z" fill="currentColor"/>
+                    <path d="M8 4a.75.75 0 01.75.75v2.5h2.5a.75.75 0 010 1.5h-2.5v2.5a.75.75 0 01-1.5 0v-2.5h-2.5a.75.75 0 010-1.5h2.5v-2.5A.75.75 0 018 4z" fill="currentColor"/>
+                </svg>
+                Connect to API
+            </div>
+            <div class="connect-form-row">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label class="input-label">API Endpoint</label>
+                    <input type="text" class="input" id="apiUrl" value="https://easyshield-api.oumhanikobby.workers.dev" placeholder="https://...">
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label class="input-label">Admin Key</label>
+                    <input type="password" class="input" id="adminKey" placeholder="Enter your admin key">
+                </div>
+                <button class="btn btn-primary" onclick="connect()" style="height: 36px;">Connect</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="tab-dashboard" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Licenses</div>
+                    <div class="stat-value" id="totalLicenses">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Servers</div>
+                    <div class="stat-value" id="activeServers">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Players</div>
+                    <div class="stat-value" id="totalPlayers">—</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Active Servers</span>
+                    <button class="btn btn-ghost btn-sm" onclick="loadDashboard()">Refresh</button>
+                </div>
+                <div class="card-body-flush" id="activeServersList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📡</div>
+                        <div class="empty-state-title">No active servers</div>
+                        <div class="empty-state-desc">Servers will appear here when the plugin reports in</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Licenses Tab -->
+        <div id="tab-licenses" class="tab-content hidden">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Licenses</span>
+                    <button class="btn btn-primary btn-sm" onclick="showCreateLicense()">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        Create License
+                    </button>
+                </div>
+                <div class="card-body-flush">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>License Key</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>HWID Usage</th>
+                                    <th>Created</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="licensesTable">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <div class="empty-state-title">No licenses</div>
+                                            <div class="empty-state-desc">Create your first license to get started</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Servers Tab -->
+        <div id="tab-servers" class="tab-content hidden">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">All Servers</span>
+                    <button class="btn btn-ghost btn-sm" onclick="loadServers()">Refresh</button>
+                </div>
+                <div class="card-body-flush">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Server</th>
+                                    <th>Address</th>
+                                    <th>Players</th>
+                                    <th>TPS</th>
+                                    <th>Version</th>
+                                    <th>Status</th>
+                                    <th>License</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serversTable">
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <div class="empty-state-title">No servers</div>
+                                            <div class="empty-state-desc">Servers will appear here once they report in</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Build Tab -->
+        <div id="tab-build" class="tab-content hidden">
+            <div class="card mb-6">
+                <div class="card-header">
+                    <span class="card-title">Build Custom Jar</span>
+                </div>
+                <div class="card-body">
+                    <p class="text-sm text-muted mb-4">Generate a custom EasyShield jar with an embedded license key. Each customer receives a unique build that requires no JVM arguments.</p>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label">License Key</label>
+                            <input type="text" class="input font-mono" id="buildLicense" placeholder="EASYSHIELD-XXXX-XXXX-XXXX-XXXX">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Customer Name</label>
+                            <input type="text" class="input" id="buildCustomer" placeholder="Optional — for tracking">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateBuildCommand()">Generate Build Command</button>
+                    <div id="buildResult" class="mt-4 hidden"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Build Instructions</span>
+                </div>
+                <div class="card-body">
+                    <div class="flex flex-col gap-4">
+                        <div>
+                            <div class="text-sm" style="font-weight: 600; margin-bottom: 4px;">1. Generate a license</div>
+                            <div class="text-sm text-muted">Create a license key in the Licenses tab</div>
+                        </div>
+                        <div>
+                            <div class="text-sm" style="font-weight: 600; margin-bottom: 4px;">2. Run the build script</div>
+                            <code class="block">.\tools\build-with-license.ps1 -LicenseKey "YOUR-KEY" -CustomerName "Customer"</code>
+                        </div>
+                        <div>
+                            <div class="text-sm" style="font-weight: 600; margin-bottom: 4px;">3. Deliver the jar</div>
+                            <div class="text-sm text-muted">The output in <code>dist/</code> is ready to send — no configuration needed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create License Modal -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Create License</div>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label class="input-label">Customer Name</label>
+                    <input type="text" class="input" id="custName" placeholder="Acme Corp">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Customer Email</label>
+                    <input type="email" class="input" id="custEmail" placeholder="contact@example.com">
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="input-label">Duration (days)</label>
+                        <input type="number" class="input" id="custDuration" value="30">
+                        <div class="input-hint">0 for unlimited</div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Max HWID Changes</label>
+                        <input type="number" class="input" id="custHwid" value="3">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Key Prefix</label>
+                    <input type="text" class="input" id="custPrefix" value="EASYSHIELD">
+                </div>
+                <div id="createResult" class="hidden mt-4"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="createLicense()">Create License</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let API_URL = '';
+        let ADMIN_KEY = '';
+
+        function animateValue(el, start, end, duration = 500) {
+            if (start === end) return;
+            el.classList.add('counting');
+            const range = end - start;
+            const startTime = performance.now();
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(start + range * eased);
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    el.textContent = end;
+                    setTimeout(() => el.classList.remove('counting'), 100);
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        function animateStat(id, value) {
+            const el = document.getElementById(id);
+            const current = parseInt(el.textContent) || 0;
+            animateValue(el, current, value);
+        }
+
+        // Tab navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                const target = document.getElementById(`tab-${tabName}`);
+                target.classList.remove('hidden');
+                target.style.animation = 'none';
+                target.offsetHeight;
+                target.style.animation = '';
+
+                if (tabName === 'dashboard') loadDashboard();
+                if (tabName === 'licenses') loadLicenses();
+                if (tabName === 'servers') loadServers();
+            });
+        });
+
+        function connect() {
+            API_URL = document.getElementById('apiUrl').value.replace(/\/$/, '');
+            ADMIN_KEY = document.getElementById('adminKey').value;
+            localStorage.setItem('apiUrl', API_URL);
+            localStorage.setItem('adminKey', ADMIN_KEY);
+            updateStatus('connecting');
+            const btn = document.querySelector('.connect-form .btn-primary');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Connecting';
+            btn.disabled = true;
+            loadDashboard().finally(() => {
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            });
+        }
+
+        function updateStatus(state) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            dot.className = 'nav-status-dot';
+            if (state === 'connected') {
+                dot.classList.add('connected');
+                text.textContent = 'Connected';
+            } else if (state === 'connecting') {
+                text.textContent = 'Connecting...';
+                dot.style.animation = 'pulse 1s ease-in-out infinite';
+            } else {
+                text.textContent = 'Disconnected';
+                dot.style.animation = '';
+            }
+        }
+
+        let toastTimer;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            clearTimeout(toastTimer);
+            toast.classList.remove('hiding');
+            toast.textContent = message;
+            toast.classList.add('show');
+            toastTimer = setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => {
+                    toast.classList.remove('show', 'hiding');
+                }, 250);
+            }, 2500);
+        }
+
+        async function apiCall(path, method = 'GET', body = null) {
+            const headers = { 'admin-key': ADMIN_KEY, 'Content-Type': 'application/json' };
+            const opts = { method, headers };
+            if (body) opts.body = JSON.stringify(body);
+            const res = await fetch(`${API_URL}${path}`, opts);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        }
+
+        function showSkeletons(containerId, count = 3) {
+            const el = document.getElementById(containerId);
+            if (!el) return;
+            if (containerId.includes('Table')) {
+                el.innerHTML = Array(count).fill(`
+                    <tr><td colspan="7">
+                        <div style="padding: 12px 16px;">
+                            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                        </div>
+                    </td></tr>
+                `).join('');
+            } else {
+                el.innerHTML = Array(count).fill(`
+                    <div style="padding: 16px;">
+                        <div class="skeleton skeleton-text" style="width: 50%;"></div>
+                        <div class="skeleton skeleton-text" style="width: 70%;"></div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                showSkeletons('activeServersList', 2);
+                const data = await apiCall('/admin/analytics');
+                updateStatus('connected');
+                animateStat('totalLicenses', data.totalLicenses || 0);
+                animateStat('activeServers', data.activeServers || 0);
+                animateStat('totalPlayers', data.totalPlayers || 0);
+
+                const list = document.getElementById('activeServersList');
+                if (data.servers && data.servers.length > 0) {
+                    list.innerHTML = data.servers.map((s, i) => `
+                        <div class="server-item" style="animation-delay: ${i * 0.05}s">
+                            <div class="server-info">
+                                <div class="server-name">${escapeHtml(s.serverName)}</div>
+                                <div class="server-meta">${escapeHtml(s.ip)}:${s.port} · ${s.players}/${s.maxPlayers} players · TPS ${s.tps} · ${escapeHtml(s.version)}</div>
+                            </div>
+                            <div class="server-status" style="color: var(--color-success);">
+                                <div class="server-status-dot" style="background: var(--color-success); animation: statusPulse 2s ease-in-out infinite;"></div>
+                                Online
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📡</div>
+                            <div class="empty-state-title">No active servers</div>
+                            <div class="empty-state-desc">Servers will appear here when the plugin reports in</div>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                updateStatus('disconnected');
+                showToast('Failed to connect — check your API URL and admin key');
+            }
+        }
+
+        async function loadLicenses() {
+            try {
+                showSkeletons('licensesTable', 4);
+                const data = await apiCall('/admin/licenses');
+                const tbody = document.getElementById('licensesTable');
+                const entries = Object.entries(data);
+                
+                if (entries.length === 0) {
+                    tbody.innerHTML = `
+                        <tr><td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-title">No licenses</div>
+                                <div class="empty-state-desc">Create your first license to get started</div>
+                            </div>
+                        </td></tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = entries.map(([key, val], i) => {
+                    const isExpired = val.expires && Date.now() > val.expires;
+                    const status = isExpired ? 'Expired' : 'Active';
+                    const badgeClass = isExpired ? 'badge-danger' : 'badge-success';
+                    const created = val.created ? new Date(val.created).toLocaleDateString() : '—';
+                    
+                    return `
+                        <tr style="animation-delay: ${i * 0.04}s">
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <code class="font-mono" style="font-size: 12px;">${escapeHtml(key)}</code>
+                                    <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(key)}')">Copy</button>
+                                </div>
+                            </td>
+                            <td>${escapeHtml(val.customerName || '—')}</td>
+                            <td><span class="badge ${badgeClass}">${status}</span></td>
+                            <td class="text-sm text-muted">${val.hwidChanges || 0} / ${val.maxHwidChanges || 3}</td>
+                            <td class="text-sm text-muted">${created}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteLicense('${escapeHtml(key)}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                showToast('Failed to load licenses');
+            }
+        }
+
+        async function loadServers() {
+            try {
+                showSkeletons('serversTable', 4);
+                const data = await apiCall('/admin/servers');
+                const tbody = document.getElementById('serversTable');
+                const entries = Object.entries(data);
+                
+                if (entries.length === 0) {
+                    tbody.innerHTML = `
+                        <tr><td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-title">No servers</div>
+                                <div class="empty-state-desc">Servers will appear here once they report in</div>
+                            </div>
+                        </td></tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = entries.map(([hwid, val], i) => {
+                    const isOnline = (Date.now() - val.lastSeen) < 300000;
+                    const statusBadge = isOnline 
+                        ? '<span class="badge badge-success">Online</span>'
+                        : `<span class="badge badge-neutral">${timeAgo(val.lastSeen)}</span>`;
+                    
+                    return `
+                        <tr style="animation-delay: ${i * 0.04}s">
+                            <td>
+                                <div class="text-sm" style="font-weight: 500;">${escapeHtml(val.serverName)}</div>
+                            </td>
+                            <td class="font-mono text-sm">${escapeHtml(val.ip)}:${val.port}</td>
+                            <td class="text-sm">${val.players}/${val.maxPlayers}</td>
+                            <td class="text-sm">${val.tps}</td>
+                            <td class="text-sm text-muted">${escapeHtml(val.version)}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(val.license)}')">Copy key</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                showToast('Failed to load servers');
+            }
+        }
+
+        function showCreateLicense() {
+            const modal = document.getElementById('createModal');
+            modal.classList.add('open');
+            document.getElementById('createResult').classList.add('hidden');
+            document.getElementById('custName').value = '';
+            document.getElementById('custEmail').value = '';
+            setTimeout(() => document.getElementById('custName').focus(), 100);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('createModal');
+            const dialog = modal.querySelector('.modal');
+            dialog.style.animation = 'none';
+            dialog.offsetHeight;
+            dialog.style.animation = 'fadeIn 0.15s ease reverse both';
+            setTimeout(() => {
+                modal.classList.remove('open');
+                dialog.style.animation = '';
+            }, 150);
+        }
+
+        async function createLicense() {
+            const body = {
+                customerName: document.getElementById('custName').value,
+                customerEmail: document.getElementById('custEmail').value,
+                duration: parseInt(document.getElementById('custDuration').value) * 86400000,
+                maxHwidChanges: parseInt(document.getElementById('custHwid').value),
+                prefix: document.getElementById('custPrefix').value
+            };
+            
+            const btn = document.querySelector('.modal-footer .btn-primary');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Creating';
+            btn.disabled = true;
+
+            try {
+                const data = await apiCall('/admin/generate', 'POST', body);
+                const result = document.getElementById('createResult');
+                result.classList.remove('hidden');
+                result.style.animation = 'fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both';
+                result.innerHTML = `
+                    <div style="background: var(--color-success-light); border: 1px solid var(--color-success); border-radius: var(--radius-md); padding: 12px 16px;">
+                        <div class="text-sm" style="font-weight: 600; color: var(--color-success); margin-bottom: 8px;">License created</div>
+                        <div class="flex items-center gap-2">
+                            <code class="font-mono" style="font-size: 13px;">${escapeHtml(data.key)}</code>
+                            <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(data.key)}')">Copy</button>
+                        </div>
+                    </div>
+                `;
+                loadLicenses();
+                showToast('License created successfully');
+            } catch (e) {
+                showToast('Failed to create license');
+            } finally {
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            }
+        }
+
+        async function deleteLicense(key) {
+            if (!confirm(`Delete license ${key}? This cannot be undone.`)) return;
+            try {
+                await apiCall('/admin/delete-license', 'POST', { key });
+                const row = event.target.closest('tr');
+                if (row) {
+                    row.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(20px)';
+                    setTimeout(() => loadLicenses(), 300);
+                } else {
+                    loadLicenses();
+                }
+                showToast('License deleted');
+            } catch (e) {
+                showToast('Failed to delete license');
+            }
+        }
+
+        function generateBuildCommand() {
+            const license = document.getElementById('buildLicense').value.trim();
+            const customer = document.getElementById('buildCustomer').value.trim();
+            
+            if (!license) {
+                showToast('Enter a license key');
+                return;
+            }
+
+            const psCmd = `.\\tools\\build-with-license.ps1 -LicenseKey "${license}"${customer ? ` -CustomerName "${customer}"` : ''}`;
+            const gradleCmd = `.\gradlew build -PlicenseKey="${license}"`;
+            
+            const result = document.getElementById('buildResult');
+            result.classList.remove('hidden');
+            result.style.animation = 'fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both';
+            result.innerHTML = `
+                <div style="background: var(--color-bg-muted); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 16px;">
+                    <div class="text-sm" style="font-weight: 600; margin-bottom: 12px;">Build Command</div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <code class="block" style="flex: 1;">${escapeHtml(psCmd)}</code>
+                        <button class="copy-btn" onclick="copyToClipboard(\`${psCmd.replace(/`/g, '\\`')}\`)">Copy</button>
+                    </div>
+                    <div class="text-xs text-muted">Run this in the project directory. Output will be in <code>dist/</code>.</div>
+                    ${customer ? `<div class="text-xs text-muted mt-4">Customer: <strong>${escapeHtml(customer)}</strong></div>` : ''}
+                </div>
+            `;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+        }
+
+        function timeAgo(ts) {
+            const diff = Date.now() - ts;
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+            return Math.floor(diff / 86400000) + 'd ago';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Init
+        const savedUrl = localStorage.getItem('apiUrl');
+        const savedKey = localStorage.getItem('adminKey');
+        if (savedUrl) document.getElementById('apiUrl').value = savedUrl;
+        if (savedKey) document.getElementById('adminKey').value = savedKey;
+    </script>
+</body>
+</html>
